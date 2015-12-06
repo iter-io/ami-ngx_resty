@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# chkconfig: 123456 99 01
+# description: this script delays execution of the subsequent init scripts on \
+#              shutdown long enough for the remaining nginx log files to be \
+#              processed and put to S3
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+lockfile="/var/lock/subsys/delayedshutdown"
+
+start() {
+   touch $lockfile
+}
+
+stop() {
+    sleep 420
+    rm -f $lockfile
+}
+
+case "$1" in
+    start)
+        $1 && exit 0
+        ;;
+    stop)
+        $1 && exit 0
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop}"
+        exit 1
+        ;;
+esac
